@@ -1,0 +1,85 @@
+from selenium import webdriver
+
+from selenium.webdriver.common.by import By
+
+from selenium.webdriver.common.keys import Keys
+
+import time
+
+import requests
+
+
+
+
+website_url = "https://quso.ai/"  
+login_id = "vikram0812+niit@proton.me"          
+password = "NIIT@2024"          
+search_text = "search_query"  
+
+
+driver = webdriver.Chrome()  # Ensure chromedriver is in your PATH
+
+
+
+try:
+
+    driver.get(website_url)
+
+    time.sleep(3)  # waiting for the page to load
+
+    username_field = driver.find_element(By.ID, "username")
+
+    username_field.send_keys(login_id)
+
+    password_field = driver.find_element(By.ID, "password") 
+
+    password_field.send_keys(password)
+
+
+
+    # Submit the login form
+
+    login_button = driver.find_element(By.ID, "loginButton") 
+
+    login_button.click()
+
+    time.sleep(5)
+
+
+
+    # Step 3: Find a specific element (example: a search bar) and interact with it
+
+    search_bar = driver.find_element(By.ID, "searchBar") 
+
+    search_bar.send_keys(search_text)
+
+    search_bar.send_keys(Keys.RETURN)
+ 
+    time.sleep(5)  
+
+
+    # Find the video, download it and locate the video download link 
+
+    video_element = driver.find_element(By.XPATH, "//a[@class='download-video']")  
+
+    video_url = video_element.get_attribute("href")
+
+    response = requests.get(video_url, stream=True)
+
+    with open("video.mp4", "wb") as file:
+
+        for chunk in response.iter_content(chunk_size=1024):
+
+            if chunk:
+
+                file.write(chunk)
+
+    print("Video downloaded successfully as video.mp4")
+
+
+
+finally:
+
+    # Close the browser
+
+    driver.quit()
